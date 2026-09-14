@@ -1,47 +1,61 @@
 from collections.abc import Iterator
 from typing import Any
+import json
 
 
-def stream_agent_events(
-    chatbot: Any,
-    content: str,
-    config: dict,
-) -> Iterator[dict]:
-    """Convert LangGraph events into clean presentation events."""
+def extract_text(content: Any) -> str:
+    """Normalize model message content into plain text."""
 
-    for event in chatbot.stream(
-        {
-            "messages": [
-                {
-                    "role": "user",
-                    "content": content,
-                }
-            ]
-        },
-        config=config,
-    ):
-        for node_name, node_output in event.items():
+    if isinstance(content, str):
+        return content
 
-            if node_name == "agent":
-                for message in node_output.get("messages", []):
-                    if message.type != "ai":
-                        continue
+    if isinstance(content, list):
+        text_parts = []
 
-                    if message.tool_calls:
-                        for tool_call in message.tool_calls:
-                            yield {
-                                "type": "tool_call",
-                                "tool": tool_call["name"],
-                            }
-                    else:
-                        yield {
-                            "type": "message",
-                            "content": message.content,
-                        }
+        for block in content:
+            if isinstance(block, dict) and block.get("type") == "text":
+                text_parts.append(block.get("text", ""))
 
-            elif node_name == "tools":
-                for message in node_output.get("messages", []):
-                    yield {
-                        "type": "tool_result",
-                        "tool": message.name,
-                    }
+        return "".join(text_parts)
+
+    return str(content)
+
+
+def stream_agent_events(chatbot: Any, content: str, config: dict) -> Iterator[str]:
+    """Convert LangGraph events into NDJSON presentation events."""
+
+    try:
+        for event in chatbot.stream(
+            {"messages": [{"role": "user", "content": content}]},
+            config=config,
+        ):
+            node_output = event.get("agent")
+
+            if not node_output:
+                continue
+
+            for message in node_output.get("messages", []):
+                if message.type != "ai":
+                    continue
+
+                if message.tool_calls:
+                    for tool_call in message.tool_calls:
+                        yield json.dumps({
+                            "type": "tool_call",
+                            "tool": tool_call["name"],
+                        }) + "\n"
+                    continue
+
+                text = extract_text(message.content)
+
+                if text.strip():
+                    yield json.dumps({
+                        "type": "message",
+                        "content": text,
+                    }) + "\n"
+
+    except Exception:
+        yield json.dumps({
+            "type": "error",
+            "message": "The agent encountered an error.",
+        }) + "\n"

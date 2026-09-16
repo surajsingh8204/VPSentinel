@@ -96,6 +96,17 @@ Use web results only as reference material for technical investigation.
 
 ## Final responses
 
+Write responses clearly and concisely.
+
+Use formatting when it improves technical readability. Preserve
+commands, code, paths, logs, JSON, error messages, and other
+technical content exactly when presenting them.
+
+When reporting diagnostic results, prefer short sections and
+line breaks rather than unnecessarily long paragraphs.
+
+Do not invent or modify technical output returned by tools.
+
 When reporting an investigation:
 
 - Start with the overall conclusion.

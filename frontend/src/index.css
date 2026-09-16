@@ -1,0 +1,877 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=VT323&display=swap');
+
+:root {
+  --edge: 1px;
+  --space: clamp(.35rem, .7vw, .7rem);
+  --panel-pad: clamp(.75rem, 3vw, 3rem);
+
+  color: #d7e3ee;
+  background: #060b0e;
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #060b0e;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+.app {
+  height: 100dvh;
+  padding: calc(var(--space) / 2);
+  display: grid;
+  grid-template-rows:
+    auto
+    auto
+    minmax(0, 1fr)
+    clamp(2.5rem, 6vh, 3rem);
+  gap: var(--space);
+  background: #050a0c;
+}
+
+.header,
+.metrics,
+.chat,
+.input-area {
+  border: var(--edge) solid #526b76;
+  background: #080e12;
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .4rem var(--panel-pad);
+}
+
+.brand {
+  color: #f4f7f7;
+  font-family: "VT323", monospace;
+  font-size: clamp(2.15rem, 4vw, 3.25rem);
+  line-height: .7;
+  letter-spacing: .055em;
+}
+
+.brand span,
+.status,
+.user-message b,
+.welcome strong,
+.welcome span {
+  color: #58ef83;
+}
+
+.tagline {
+  margin: 5px 0 0;
+  color: #9eb1c2;
+  font-family: "VT323", monospace;
+  font-size: 1.12rem;
+  letter-spacing: .07em;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  color: #61ee87;
+  font-family: "VT323", monospace;
+  font-size: 1.45rem;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.status i {
+  width: 13px;
+  height: 13px;
+  background: currentColor;
+  display: inline-block;
+}
+
+.divider {
+  height: 41px;
+  border-left: 1px solid #425663;
+}
+
+.release {
+  display: grid;
+  gap: 5px;
+  color: #8fa4b7;
+}
+
+.release b {
+  font-weight: 400;
+}
+
+.release small {
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+
+/* =========================
+   METRICS
+   ========================= */
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.metric {
+  min-width: 0;
+
+  /*
+   * IMPORTANT:
+   * Reduced the old 7.5vw padding.
+   * Large horizontal padding was causing the
+   * metric content to overflow at half-screen widths.
+   */
+  padding: .45rem clamp(.65rem, 2.2vw, 2rem);
+
+  border-right: var(--edge) solid #455967;
+  overflow: hidden;
+}
+
+.metric:last-child {
+  border: 0;
+}
+
+.metric-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+  min-width: 0;
+}
+
+.metric-label {
+  min-width: 0;
+
+  color: #cad8e3;
+  font-family: "VT323", monospace;
+  font-size: clamp(1.25rem, 1.7vw, 1.55rem);
+  letter-spacing: .06em;
+
+  white-space: nowrap;
+}
+
+.metric-label::before {
+  content: "▣";
+  display: inline-block;
+  margin-right: clamp(8px, 1.3vw, 25px);
+  font-size: 1.5rem;
+  vertical-align: -2px;
+}
+
+.metric-top strong {
+  flex: 0 0 auto;
+
+  color: #f3f5f8;
+  font-family: "VT323", monospace;
+  font-size: clamp(1.65rem, 2.4vw, 2.2rem);
+  font-weight: 400;
+
+  white-space: nowrap;
+}
+
+.metric-memory .metric-label::before {
+  content: "▤";
+  color: #5eaff4;
+}
+
+.metric-storage .metric-label::before {
+  content: "▱";
+  color: #ffe37a;
+}
+
+.metric-cpu .metric-label::before {
+  color: #58ef83;
+}
+
+.segmented-bar {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: .25rem;
+  margin: .3rem 0;
+  min-width: 0;
+}
+
+.segmented-bar span {
+  min-width: 0;
+  height: .8rem;
+  background: #2a3942;
+}
+
+.segmented-bar.cpu .filled {
+  background: #5bfa86;
+}
+
+.segmented-bar.memory .filled {
+  background: #5aaff7;
+}
+
+.segmented-bar.storage .filled {
+  background: #ffe278;
+}
+
+.metric-detail {
+  margin: 0;
+  color: #d3e0e9;
+  font-family: "VT323", monospace;
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+  letter-spacing: .045em;
+
+  /*
+   * Allow the detail to adapt to narrow metric cards.
+   */
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.swap-detail {
+  margin: 2px 0 0;
+  color: #718796;
+  font-family: "VT323", monospace;
+  font-size: clamp(.9rem, 1.2vw, 1.05rem);
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+
+/* =========================
+   CHAT
+   ========================= */
+
+.chat {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chat-scroll {
+  height: 100%;
+  overflow-y: auto;
+  padding: clamp(.8rem, 2vw, 1.3rem) clamp(1rem, 3vw, 2.4rem);
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.chat-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-stream {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.welcome {
+  color: #afbdca;
+  line-height: 1.75;
+}
+
+.welcome strong {
+  font-size: 1.1rem;
+}
+
+.welcome p {
+  margin: 3px 0;
+}
+
+.user-message,
+.tool-call,
+.agent-message,
+.thinking,
+.error-message {
+  max-width: min(900px, calc(100% - 210px));
+}
+
+.user-message {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+  color: #5bfa86;
+  font-weight: 600;
+}
+
+.user-message b {
+  font-size: 1.35rem;
+  line-height: .8;
+}
+
+.tool-call {
+  margin: 0 0 16px;
+  color: #78c4ff;
+}
+
+.tool-call code {
+  font: inherit;
+}
+
+.agent-message {
+  color: #dce6ef;
+  line-height: 1.55;
+}
+
+.agent-message h2 {
+  margin: 0 0 8px;
+  color: #5bfa86;
+  font-family: "VT323", monospace;
+  font-size: 1.75rem;
+  letter-spacing: .05em;
+}
+
+.agent-message h1,
+.agent-message h3 {
+  margin: 14px 0 6px;
+  color: #f2f5f8;
+  font-size: 1.08rem;
+}
+
+.agent-message p {
+  margin: 6px 0 13px;
+}
+
+.agent-message ul,
+.agent-message ol {
+  margin: 5px 0 16px;
+  padding-left: 22px;
+}
+
+.agent-message li::marker {
+  color: #58ef83;
+}
+
+.agent-message table {
+  width: 100%;
+  margin: 10px 0 18px;
+  border-collapse: collapse;
+}
+
+.agent-message th {
+  color: #58ef83;
+  text-align: left;
+}
+
+.agent-message th,
+.agent-message td {
+  padding: 4px 16px;
+  border: 1px solid #4d6270;
+}
+
+.inline-code {
+  padding: 1px 4px;
+  color: #8dc9f7;
+  background: #111b21;
+}
+
+.code-block {
+  overflow-x: auto;
+  padding: 11px;
+  color: #cbd9e5;
+  border: 1px solid #40515d;
+  background: #0b1217;
+}
+
+.error-message {
+  margin-top: 16px;
+  color: #ff8888;
+}
+
+.thinking {
+  margin-top: 17px;
+  color: #58ef83;
+}
+
+.thinking span {
+  margin-left: 8px;
+  color: #8ea5b6;
+}
+
+
+/* =========================
+   INPUT
+   ========================= */
+
+.input-area {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    clamp(6.5rem, 13vw, 10.6rem);
+  min-height: 0;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  min-width: 0;
+  padding: .25rem clamp(.8rem, 2.3vw, 1.8rem);
+}
+
+.input-wrapper > span {
+  color: #e1e9f0;
+  font-size: 1.6rem;
+}
+
+.input-wrapper textarea {
+  width: 100%;
+  height: 1.55rem;
+  overflow: hidden;
+  resize: none;
+  border: 0;
+  outline: 0;
+  color: #dce7ee;
+  background: transparent;
+  line-height: 1.5;
+}
+
+.input-wrapper textarea::placeholder {
+  color: #536b7c;
+}
+
+.input-area button {
+  width: calc(100% - .7rem);
+  min-width: 0;
+  margin: .35rem;
+  padding-inline: .2rem;
+  overflow: hidden;
+  color: #5bfa86;
+  border: var(--edge) solid #5bfa86;
+  background: transparent;
+  font-family: "VT323", monospace;
+  font-size: 1.7rem;
+  letter-spacing: .08em;
+  font-weight: 400;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.input-area button:hover:not(:disabled),
+.input-area button:focus-visible {
+  outline: 1px solid #b7ffd0;
+  outline-offset: 2px;
+  background: #11301d;
+}
+
+.input-area button:disabled {
+  color: #4f7860;
+  border-color: #3c6350;
+  cursor: not-allowed;
+}
+
+
+/* =========================
+   CAT
+   ========================= */
+
+.chat {
+  position: relative;
+  isolation: isolate;
+}
+
+.cat-assistant {
+  position: absolute;
+
+  right: clamp(.75rem, 2vw, 1.5rem);
+  bottom: clamp(.65rem, 1.5vw, 1rem);
+
+  z-index: 5;
+
+  width: clamp(5rem, 7vw, 6.5rem);
+
+  pointer-events: none;
+}
+
+.cat-bubble {
+  width: 108px;
+
+  margin: 0 2px 6px auto;
+  padding: 7px;
+
+  color: #9bb0c0;
+
+  border: 1px solid #536a7b;
+  background: #080e12;
+
+  font-size: .74rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+
+/* =========================
+   CAT SVG
+   ========================= */
+
+.cat-svg {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  overflow: visible;
+
+  /*
+   * Clean SVG rendering.
+   * No forced pixel/crisp rendering.
+   */
+  shape-rendering: geometricPrecision;
+}
+
+.cat-svg path,
+.cat-svg circle,
+.cat-svg ellipse {
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* =========================
+   GROUND SHADOW
+   ========================= */
+
+.cat-shadow {
+  display: block;
+
+  fill: #020608;
+  opacity: .75;
+
+  /*
+   * Keeps the shadow visually grounded
+   * directly underneath the cat.
+   */
+}
+
+
+/* =========================
+   CAT BODY
+   ========================= */
+
+.cat-body,
+.cat-head {
+  fill: #eee7da;
+  stroke: #26333a;
+  stroke-width: 2;
+}
+
+.cat-tail,
+.cat-legs {
+  fill: none;
+
+  stroke: #eee7da;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 11;
+}
+
+.cat-legs {
+  stroke: #eee7da;
+  stroke-width: 11;
+}
+
+
+/* =========================
+   FACE
+   ========================= */
+
+.cat-ear-inner,
+.cat-face,
+.cat-whiskers,
+.cat-stripe {
+  fill: none;
+
+  stroke: #30383c;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.cat-ear-inner {
+  stroke: #e7a8ad;
+  stroke-width: 3;
+}
+
+
+/* =========================
+   BODY PATCHES
+   ========================= */
+
+.cat-patch {
+  fill: #a4afb3;
+}
+
+
+/* =========================
+   YARN
+   ========================= */
+
+.cat-yarn {
+  fill: none;
+
+  stroke: #58ef83;
+  stroke-width: 2;
+}
+
+.cat-yarn circle {
+  fill: #112c1b;
+}
+
+
+/* =========================
+   ANIMATION STATES
+   ========================= */
+
+.cat-stretch .cat-body {
+  fill: #fff2de;
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 900px) {
+  .cat-assistant {
+    right: 1rem;
+    bottom: .75rem;
+    width: 5.75rem;
+  }
+
+  .cat-bubble {
+    width: 100px;
+  }
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 620px) {
+  .cat-assistant {
+    right: .65rem;
+    bottom: .65rem;
+    width: 5rem;
+    opacity: .9;
+  }
+
+  .cat-bubble {
+    width: 92px;
+    padding: 6px;
+    font-size: .68rem;
+  }
+}
+
+
+/* =========================
+   VERY SHORT SCREENS
+   ========================= */
+
+@media (max-height: 34rem) {
+  .cat-assistant {
+    right: .5rem;
+    bottom: .5rem;
+    width: 3.75rem;
+  }
+
+  .cat-bubble {
+    display: none;
+  }
+}
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 900px) {
+  .app {
+    grid-template-rows:
+      auto
+      auto
+      minmax(320px, 1fr)
+      48px;
+  }
+
+  .header {
+    padding: 15px 23px;
+  }
+
+  .metric {
+    padding-inline: 18px;
+  }
+
+  .metric-label::before {
+    margin-right: 11px;
+  }
+
+  .chat {
+    padding: 0;
+  }
+
+  .chat-scroll {
+    padding-inline: 24px;
+  }
+
+  .user-message,
+  .tool-call,
+  .agent-message,
+  .thinking,
+  .error-message {
+    max-width: calc(100% - 145px);
+  }
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 620px) {
+  .app {
+    height: auto;
+    min-height: 100vh;
+    grid-template-rows:
+      auto
+      auto
+      minmax(390px, 1fr)
+      auto;
+    gap: 8px;
+    padding: 5px;
+  }
+
+  .header {
+    align-items: flex-start;
+    gap: 16px;
+    padding: 15px;
+  }
+
+  .header-meta {
+    gap: 10px;
+    font-size: .78rem;
+  }
+
+  .status {
+    gap: 6px;
+  }
+
+  .status i {
+    width: 8px;
+    height: 8px;
+  }
+
+  .divider {
+    height: 32px;
+  }
+
+  .release small {
+    font-size: .57rem;
+  }
+
+  .tagline {
+    font-size: .7rem;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .metric {
+    padding: 14px 20px;
+    border-right: 0;
+    border-bottom: 1px solid #455967;
+  }
+
+  .metric:last-child {
+    border-bottom: 0;
+  }
+
+  .metric-detail {
+    white-space: nowrap;
+  }
+
+  .chat {
+    min-height: 420px;
+  }
+
+  .chat-scroll {
+    padding: 19px 18px;
+  }
+
+  .user-message,
+  .tool-call,
+  .agent-message,
+  .thinking,
+  .error-message {
+    max-width: 100%;
+  }
+
+  .cat-assistant {
+    right: .75rem;
+    bottom: .65rem;
+    width: 5rem;
+    opacity: .8;
+  }
+
+  .input-area {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 96px);
+  }
+
+  .input-area button {
+    font-size: 1.45rem;
+  }
+
+  .input-wrapper {
+    gap: 9px;
+    padding: 10px;
+  }
+
+  .input-wrapper > span {
+    font-size: 1.45rem;
+  }
+
+  .agent-message {
+    overflow-x: auto;
+    font-size: .89rem;
+  }
+
+  .agent-message th,
+  .agent-message td {
+    padding: 4px 8px;
+    white-space: nowrap;
+  }
+}
+
+
+/* =========================
+   VERY SHORT SCREENS
+   ========================= */
+
+@media (max-height: 34rem) {
+  .cat-assistant {
+    right: .5rem;
+    bottom: .5rem;
+    width: 3.75rem;
+  }
+
+  .cat-bubble {
+    display: none;
+  }
+}

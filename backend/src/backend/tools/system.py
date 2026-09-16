@@ -21,16 +21,25 @@ def get_cpu_usage() -> str:
 
 @tool
 def get_memory_usage() -> str:
-    """Get the current memory usage of the VPS."""
+    """Get the current RAM and swap memory usage of the VPS."""
+
     memory = psutil.virtual_memory()
+    swap = psutil.swap_memory()
 
     return json.dumps({
-        "total_bytes": memory.total,
-        "available_bytes": memory.available,
-        "used_bytes": memory.used,
-        "usage_percent": memory.percent,
+        "ram": {
+            "total_bytes": memory.total,
+            "available_bytes": memory.available,
+            "used_bytes": memory.used,
+            "usage_percent": memory.percent,
+        },
+        "swap": {
+            "total_bytes": swap.total,
+            "used_bytes": swap.used,
+            "free_bytes": swap.free,
+            "usage_percent": swap.percent,
+        },
     })
-
 
 @tool
 def get_disk_usage() -> str:
